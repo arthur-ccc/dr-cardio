@@ -8,7 +8,7 @@ Sistema de Inteligência Artificial para análise automática de artigos cientí
 
 1. **Ingestão dos dados**  
    - Artigos advindos de bases open-source (kaglee).  
-   - Download → Conversão para texto puro → Coleta de metadados.
+   - Download → Coleta de metadados em tabela CSV.
 
 2. **NLP (Processamento de Linguagem Natural)**  
    - Transformação do texto puro em informação estruturada.  
