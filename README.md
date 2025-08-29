@@ -7,7 +7,7 @@ Sistema de Inteligência Artificial para análise automática de artigos cientí
 ## Arquitetura do Pipeline
 
 1. **Ingestão dos dados**  
-   - Artigos advindos de bases open-source (kaglee ou PubMed).  
+   - Artigos advindos de bases open-source (kaglee).  
    - Download → Conversão para texto puro → Coleta de metadados.
 
 2. **NLP (Processamento de Linguagem Natural)**  
@@ -16,7 +16,7 @@ Sistema de Inteligência Artificial para análise automática de artigos cientí
    - Identificação de relações (ex.: `febre` → `cardiopatia`).  
 
 3. **Estruturação do Conhecimento**  
-   - Organização em tabelas ou grafos.  
+   - Organização em tabelas.  
    - Consolidação de múltiplas evidências com referência aos artigos.
 
 4. **Camada de Decisão**  
@@ -25,7 +25,8 @@ Sistema de Inteligência Artificial para análise automática de artigos cientí
 
 ## Justificativas Técnicas
 
-- **Algoritmo escolhido:** Árvore de Decisão (CART ou XgBoost)  
+- **Algoritmo escolhido:** Árvore de Decisão (XgBoost)
+  - Alta performance quando comparado ao tradicional CART.
   - Explicável e transparente.  
   - Adequado para representar conhecimento derivado da literatura.  
   - Fácil de validar em TDD.  
@@ -37,20 +38,20 @@ Sistema de Inteligência Artificial para análise automática de artigos cientí
 - **Ferramentas previstas:**  
   - Python  
   - Testes: pytest
+  - KaggleApi
 
 ## Plano de TDD
 
 - **Testes Unitários**
-  - Extração de texto e metadados dos artigos.  
-  - Normalização de unidades (ex.: °C, mg/dL).  
+  - Extração de texto e metadados dos artigos. 
   - Reconhecimento de entidades biomédicas em frases de teste.
 
 - **Testes de Relação**
-  - Sintoma ↔ Doença (ex.: "dor no peito" → "cardiopatia").  
+  - Sintoma ↔ Doença (ex.: "dor no peito" → "cardiopatia").
 
 - **Testes da Árvore de Decisão**
-  - Predições em casos clínicos sintéticos.  
-  - Explicabilidade: cada decisão deve exibir o caminho da árvore.  
+  - Predições em casos clínicos sintéticos.
+  - Explicabilidade: cada decisão deve exibir o caminho da árvore.
 
 - **Testes de Integração**
   - Pipeline completo: artigo → entidades → árvore → diagnóstico.  
