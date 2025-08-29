@@ -1,4 +1,4 @@
-# Dr. Neurônios 🫀
+# Dr. Cardio 🫀
 Sistema de Inteligência Artificial para análise automática de artigos científicos e auxílio no diagnóstico de doenças cardiovasculares.
 
 🚨 **Aviso importante:** Este projeto tem fins acadêmicos e **não substitui a avaliação médica profissional**.
