@@ -7,7 +7,7 @@ Sistema de Inteligência Artificial para análise automática de artigos cientí
 ## Arquitetura do Pipeline
 
 1. **Ingestão dos dados**  
-   - Artigos advindos de bases open-source (PMC Open Access).  
+   - Artigos advindos de bases open-source (kaglee ou PubMed).  
    - Download → Conversão para texto puro → Coleta de metadados.
 
 2. **NLP (Processamento de Linguagem Natural)**  
@@ -23,13 +23,9 @@ Sistema de Inteligência Artificial para análise automática de artigos cientí
    - Implementação de **Árvore de Decisão** para diagnóstico.  
    - Justificativa: maior **explicabilidade** em comparação com sistemas especialistas.  
 
-5. **API / Interface** *(futuro)*  
-   - Exposição dos resultados via API.  
-   - Visualização simples do caminho da árvore e artigos usados.
-
 ## Justificativas Técnicas
 
-- **Algoritmo escolhido:** Árvore de Decisão (CART)  
+- **Algoritmo escolhido:** Árvore de Decisão (CART ou XgBoost)  
   - Explicável e transparente.  
   - Adequado para representar conhecimento derivado da literatura.  
   - Fácil de validar em TDD.  
