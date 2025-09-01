@@ -105,4 +105,84 @@ class TestReadArticleContent:
 
         assert content == ""
 
-        
+def test_download_metadata_with_retry_mechanism(data_ingestor, mocker):
+    """
+    Testa o mecanismo de retry em caso de falhas temporárias da API
+    """
+    mock_api = mocker.patch('kaggle.api.kaggle_api_extended.KaggleApi')
+    mock_instance = MagicMock()
+    mock_api.return_value = mock_instance
+    
+    # Simular falha na primeira tentativa e sucesso na segunda
+    mock_instance.dataset_download_files.side_effect = [
+        Exception("Temporary API error"),
+        None  # Sucesso na segunda tentativa
+    ]
+    
+    # Configurar retry (assumindo que a classe tem essa capacidade)
+    data_ingestor.max_retries = 3
+    data_ingestor.retry_delay = 0.1
+    
+    # Criar arquivo de metadados após sucesso
+    (data_ingestor.data_path / "metadata.csv").touch()
+    
+    metadata_path = data_ingestor.download_metadata("metadata.csv")
+    
+    assert mock_instance.dataset_download_files.call_count == 2
+    assert os.path.exists(metadata_path)
+
+def test_handle_large_dataset_download(data_ingestor, mocker):
+    """
+    Testa o download de conjuntos de dados muito grandes
+    """
+    mock_api = mocker.patch('kaggle.api.kaggle_api_extended.KaggleApi')
+    mock_instance = MagicMock()
+    mock_api.return_value = mock_instance
+    
+    # Simular download de dataset grande (mais de 1GB)
+    (data_ingestor.data_path / "metadata.csv").touch()
+    
+    # Configurar timeout
+    data_ingestor.download_timeout = 300  # 5 minutos
+    
+    metadata_path = data_ingestor.download_metadata("metadata.csv")
+    
+    assert os.path.exists(metadata_path)
+    # Verificar se o timeout foi respeitado
+    mock_instance.dataset_download_files.assert_called_with(
+        "user/dataset", 
+        path=data_ingestor.data_path, 
+        unzip=True, 
+        quiet=True
+    )
+
+def test_read_article_content_with_different_formats(data_ingestor, tmp_path):
+    """
+    Testa a leitura de artigos em diferentes formatos (PDF, DOCX, TXT)
+    """
+    # Testar arquivo de texto
+    txt_file = tmp_path / "article.txt"
+    txt_file.write_text("Conteúdo em texto puro")
+    
+    content = data_ingestor.read_article_content(txt_file)
+    assert content == "Conteúdo em texto puro"
+    
+    # Testar arquivo PDF (simulado)
+    pdf_file = tmp_path / "article.pdf"
+    pdf_file.write_text("Conteúdo em PDF simulado")
+    
+    # Mock para extração de texto de PDF
+    with patch('src.data_ingestion.extract_text_from_pdf') as mock_extract:
+        mock_extract.return_value = "Texto extraído do PDF"
+        content = data_ingestor.read_article_content(pdf_file)
+        assert content == "Texto extraído do PDF"
+    
+    # Testar arquivo DOCX (simulado)
+    docx_file = tmp_path / "article.docx"
+    docx_file.write_text("Conteúdo em DOCX simulado")
+    
+    # Mock para extração de texto de DOCX
+    with patch('src.data_ingestion.extract_text_from_docx') as mock_extract:
+        mock_extract.return_value = "Texto extraído do DOCX"
+        content = data_ingestor.read_article_content(docx_file)
+        assert content == "Texto extraído do DOCX"

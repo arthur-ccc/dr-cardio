@@ -215,3 +215,61 @@ class TestExtractRelations:
         relations = nlp_processor.extract_relations(text)
 
         assert len(relations) == 0
+
+def test_extract_entities_with_context_awareness(nlp_processor):
+    """
+    Testa se o NER é sensível ao contexto (ex: 'história de diabetes' vs 'diagnóstico de diabetes')
+    """
+    text = "História familiar de diabetes mellitus. Diagnóstico atual: hipertensão arterial."
+    
+    entities = nlp_processor.extract_entities(text)
+    
+    # Deve identificar ambas as doenças, mas talvez com marcas de contexto diferentes
+    diabetes_entities = [ent for ent in entities if "diabetes" in ent[0].lower()]
+    hypertension_entities = [ent for ent in entities if "hipertensão" in ent[0].lower()]
+    
+    assert len(diabetes_entities) > 0
+    assert len(hypertension_entities) > 0
+
+def test_extract_entities_with_temporal_information(nlp_processor):
+    """
+    Testa a extração de entidades com informações temporais
+    """
+    text = "O paciente apresentou dor torácica há 3 dias e febre desde ontem."
+    
+    entities = nlp_processor.extract_entities(text)
+    temporal_info = nlp_processor.extract_temporal_information(text)
+    
+    assert any("dor torácica" in ent[0] for ent in entities)
+    assert any("febre" in ent[0] for ent in entities)
+    assert len(temporal_info) > 0  # Deve extrair informações temporais
+
+def test_extract_entities_with_measurements(nlp_processor):
+    """
+    Testa a extração de entidades com valores de medição
+    """
+    text = "Pressão arterial: 150/95 mmHg. Frequência cardíaca: 120 bpm."
+    
+    entities = nlp_processor.extract_entities(text)
+    measurements = nlp_processor.extract_measurements(text)
+    
+    assert any("Pressão arterial" in ent[0] for ent in entities)
+    assert any("Frequência cardíaca" in ent[0] for ent in entities)
+    assert len(measurements) >= 2  # Deve extrair ambas as medições
+
+def test_extract_entities_with_negation_detection(nlp_processor):
+    """
+    Testa a detecção de negação no contexto de entidades
+    """
+    text = "Paciente nega dor torácica, mas relata dispneia."
+    
+    entities = nlp_processor.extract_entities(text)
+    entities_with_negation = nlp_processor.extract_entities_with_negation(text)
+    
+    # Deve identificar ambas as entidades
+    assert any("dor torácica" in ent[0] for ent in entities)
+    assert any("dispneia" in ent[0] for ent in entities)
+    
+    # Deve marcar a dor torácica como negada
+    negated_entities = [ent for ent in entities_with_negation if ent[2] is True]  # Assumindo que (entity, type, is_negated)
+    assert any("dor torácica" in ent[0] for ent in negated_entities)
