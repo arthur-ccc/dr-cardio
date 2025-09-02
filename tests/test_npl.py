@@ -28,7 +28,7 @@ class TestExtractEntities:
             [("cardiopatia", "DOENÇA"), ("palpitações", "SINTOMA")]
         )
     ])
-    def test_extract_entities_success(nlp_processor, text, expected_entities):
+    def test_extract_entities_success(self,nlp_processor, text, expected_entities):
         """
         Caso de Sucesso Parametrizado: Verifica a extração de diferentes tipos de
         entidades em diversas frases.
@@ -38,7 +38,7 @@ class TestExtractEntities:
         for expected in expected_entities:
             assert expected in result_entities
 
-    def test_process_text_with_no_entities(nlp_processor):
+    def test_process_text_with_no_entities(self,nlp_processor):
         """
         Quando o texto que não contém entidades relevantes.
         """
@@ -47,7 +47,7 @@ class TestExtractEntities:
         
         assert len(entities) == 0
 
-    def test_process_empty_string(nlp_processor):
+    def test_process_empty_string(self,nlp_processor):
         """
         Quando recebemos uma string vazia como entrada.
         """
@@ -56,7 +56,7 @@ class TestExtractEntities:
         
         assert len(entities) == 0
 
-    def test_extract_entities_with_negation(nlp_processor):
+    def test_extract_entities_with_negation(self,nlp_processor):
         """
         Verifica se entidades são extraídas mesmo em um contexto de negação.
         """
@@ -69,7 +69,7 @@ class TestExtractEntities:
         for expected in expected_entities:
             assert expected in result_entities
 
-    def test_extract_entities_with_uncertainty(nlp_processor):
+    def test_extract_entities_with_uncertainty(self,nlp_processor):
         """
         Verifica a extração de entidades em contextos de suspeita ou hipótese.
         """
@@ -80,7 +80,7 @@ class TestExtractEntities:
         
         assert expected_entities[0] in result_entities
     
-    def test_extract_entities_with_abbreviations(nlp_processor):
+    def test_extract_entities_with_abbreviations(self,nlp_processor):
         
         text = "O IAM foi confirmado pelo resultado do ECG."
         expected_entities = [("IAM", "DOENÇA"), ("ECG", "EXAME")]
@@ -95,14 +95,14 @@ class TestExtractEntities:
         ("O paciente tem hipertensão.", ("hipertensão", "DOENÇA")),
         ("O paciente tem HIPERTENSÃO.", ("HIPERTENSÃO", "DOENÇA"))
     ])
-    def test_extract_entities_is_case_insensitive(nlp_processor, text, expected_entity):
+    def test_extract_entities_is_case_insensitive(self,nlp_processor, text, expected_entity):
        
         result_entities = nlp_processor.extract_entities(text)
         
         assert len(result_entities) >= 1
         assert expected_entity in result_entities
 
-    def test_extract_entities_with_adjacent_punctuation(nlp_processor):
+    def test_extract_entities_with_adjacent_punctuation(self,nlp_processor):
       
         text = "Sintomas incluem: cansaço, palpitações (leves) e sudorese."
         expected_entities = [
@@ -120,7 +120,7 @@ class TestExtractEntities:
     
 class TestExtractRelations:
         
-    def test_extract_symptom_disease_relation(nlp_processor):
+    def test_extract_symptom_disease_relation(self,nlp_processor):
         """
         Verifica se uma relação direta entre sintoma e doença é identificada.
         """
@@ -133,7 +133,7 @@ class TestExtractRelations:
         
         assert expected_relation in relations
 
-    def test_no_relation_between_entities(nlp_processor):
+    def test_no_relation_between_entities(self,nlp_processor):
         """
         Verifica que entidades na mesma frase, mas sem ligação direta,
         não geram uma relação.
@@ -143,7 +143,7 @@ class TestExtractRelations:
         
         assert len(relations) == 0
 
-    def test_extract_direct_symptom_disease_relation(nlp_processor):
+    def test_extract_direct_symptom_disease_relation(self,nlp_processor):
         """
         Verifica a extração de uma relação direta onde um substantivo é
         explicitamente ligado a outro (ex: 'sintoma de').
@@ -158,7 +158,7 @@ class TestExtractRelations:
         assert len(relations) > 0
         assert expected_relation in relations
 
-    def test_extract_causal_verb_relation(nlp_processor):
+    def test_extract_causal_verb_relation(self,nlp_processor):
         """
         Verifica a extração de uma relação baseada em um verbo causal (ex: 'pode causar').
         """
@@ -169,7 +169,7 @@ class TestExtractRelations:
 
         assert expected_relation in relations
 
-    def test_extract_confirmation_relation_by_exam(nlp_processor):
+    def test_extract_confirmation_relation_by_exam(self,nlp_processor):
         """
         Verifica a extração de uma relação onde um exame confirma um diagnóstico.
         """
@@ -180,7 +180,7 @@ class TestExtractRelations:
 
         assert expected_relation in relations
 
-    def test_extract_multiple_relations_in_sentence(nlp_processor):
+    def test_extract_multiple_relations_in_sentence(self,nlp_processor):
         """
         Verifica se o sistema consegue extrair múltiplas relações de uma única frase.
         """
@@ -196,7 +196,7 @@ class TestExtractRelations:
         for expected in expected_relations:
             assert expected in relations
 
-    def test_no_relation_extracted_when_entities_are_unconnected(nlp_processor):
+    def test_no_relation_extracted_when_entities_are_unconnected(self,nlp_processor):
         """
         Garante que o sistema não invente relações onde não existem.
         As entidades estão presentes, mas não há uma ligação sintática direta.
@@ -206,7 +206,7 @@ class TestExtractRelations:
         
         assert len(relations) == 0
 
-    def test_no_relation_extracted_on_negated_context(nlp_processor):
+    def test_no_relation_extracted_on_negated_context(self,nlp_processor):
         """
         Garante que uma relação explicitamente negada não seja extraída.
         """
