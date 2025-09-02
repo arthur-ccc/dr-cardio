@@ -1,7 +1,9 @@
 import pytest
 from unittest.mock import MagicMock, patch
+# esse arquivo ainda não existe
 from src.data_ingestion import DataIngestor
 from src.nlp import NLPProcessor
+# esse arquivo ainda não existe
 from src.knowledge_structure import KnowledgeOrganizer
 from src.decision_tree import CardiovascularDiagnosisModel
 

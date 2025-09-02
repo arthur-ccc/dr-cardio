@@ -5,7 +5,7 @@ from src.nlp import NLPProcessor
 @pytest.fixture(scope="session")
 def nlp_processor():
     
-    nlp_model = spacy.load("pt_core_news_lg") 
+    nlp_model = spacy.load("en_core_news_sm")
     return NLPProcessor(nlp_model)
 
 class TestExtractEntities: 
