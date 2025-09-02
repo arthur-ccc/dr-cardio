@@ -11,17 +11,19 @@ class NLPProcessor:
         self.nlp = nlp_model
 
         self.symptoms = [
-            "chest pain", "shortness of breath", "dyspnea", "palpitations",
-            "fatigue", "sweating", "fever", "chest pain", "headache",
-            "dyspnea", "fever"
+            "chest_pain","chest_tightness","angina","shortness_of_breath","dyspnea",
+            "orthopnea","paroxysmal_nocturnal_dyspnea","palpitations","tachycardia","arrhythmia",
+            "fatigue","weakness","dizziness","syncope","lightheadedness","sweating",    
+            "edema","ankle_swelling","nausea","vomiting"
         ]
         self.diseases = [
-            "acute myocardial infarction", "heart disease", "heart failure",
-            "infarction", "pneumonia", "viral infection", "diabetes", "diabetes mellitus",
-            "hypertension", "hypertension", "uncontrolled hypertension",
-            "pulmonary embolism", "cardiomyopathy", "stroke", "cardiac arrhythmia",
-            "kidney damage", "dehydration"
+            "coronary artery disease", "myocardial infarction","angina pectoris","heart failure",
+            "hypertension","arrhythmia", "atrial fibrillation","cardiomyopathy","congenital heart disease",
+            "peripheral artery disease","stroke","deep vein thrombosis","pulmonary embolism","pericarditis",
+            "endocarditis", "aortic aneurysm","aortic dissection",
+            "cardiac arrest", "sudden cardiac death","ischemic heart disease"
         ]
+
         self.exams = [
             "electrocardiogram", "ecg", "blood pressure", "heart rate",
             "electrocardiogram"

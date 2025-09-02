@@ -1,0 +1,102 @@
+"""
+The patient experienced chest pain and fatigue and was diagnosed with coronary artery disease.
+Shortness of breath and dizziness were reported, leading to a diagnosis of coronary artery disease.
+Chest tightness and palpitations were observed, confirming coronary artery disease.
+Angina and sweating were noted, which indicated coronary artery disease.
+Fatigue and lightheadedness led to a diagnosis of coronary artery disease.
+The patient had severe chest pain and shortness of breath, and was diagnosed with myocardial infarction.
+Sweating and nausea occurred before the patient was found to have a myocardial infarction.
+Palpitations and dizziness were reported, confirming myocardial infarction.
+Chest tightness and fatigue indicated myocardial infarction.
+Dyspnea and lightheadedness led to a myocardial infarction diagnosis.
+The patient experienced angina and chest pain, leading to a diagnosis of angina pectoris.
+Shortness of breath and fatigue were reported, confirming angina pectoris.
+Palpitations and dizziness occurred during activity, indicating angina pectoris.
+Chest tightness and sweating were observed, consistent with angina pectoris.
+Dyspnea and weakness led to a diagnosis of angina pectoris.
+The patient had fatigue and shortness of breath and was diagnosed with heart failure.
+Edema and ankle swelling were observed, indicating heart failure.
+Dyspnea on exertion and weakness confirmed heart failure.
+Palpitations and lightheadedness led to a heart failure diagnosis.
+Orthopnea and paroxysmal nocturnal dyspnea were reported, consistent with heart failure.
+The patient experienced headaches and dizziness, leading to a diagnosis of hypertension.
+Fatigue and palpitations were observed, confirming hypertension.
+Shortness of breath and chest tightness indicated hypertension.
+Weakness and lightheadedness were reported, consistent with hypertension.
+Sweating and nausea led to a hypertension diagnosis.
+The patient had palpitations and tachycardia, and was diagnosed with arrhythmia.
+Chest discomfort and dizziness indicated arrhythmia.
+Syncope and lightheadedness were observed, confirming arrhythmia.
+Fatigue and palpitations led to an arrhythmia diagnosis.
+Shortness of breath and arrhythmia were reported, consistent with arrhythmia.
+The patient experienced palpitations and shortness of breath, leading to a diagnosis of atrial fibrillation.
+Fatigue and dizziness were observed, confirming atrial fibrillation.
+Chest tightness and lightheadedness indicated atrial fibrillation.
+Dyspnea and palpitations were reported, consistent with atrial fibrillation.
+Syncope and weakness led to a diagnosis of atrial fibrillation.
+The patient had fatigue and shortness of breath and was diagnosed with cardiomyopathy.
+Palpitations and edema were observed, confirming cardiomyopathy.
+Chest tightness and weakness indicated cardiomyopathy.
+Dyspnea and ankle swelling were reported, consistent with cardiomyopathy.
+Lightheadedness and tachycardia led to a cardiomyopathy diagnosis.
+The patient experienced cyanosis and shortness of breath, leading to a diagnosis of congenital heart disease.
+Fatigue and palpitations were reported, confirming congenital heart disease.
+Chest pain and dizziness indicated congenital heart disease.
+Dyspnea and weakness were observed, consistent with congenital heart disease.
+Syncope and lightheadedness led to a diagnosis of congenital heart disease.
+The patient had leg pain and fatigue, and was diagnosed with peripheral artery disease.
+Numbness and weakness were observed, confirming peripheral artery disease.
+Cold extremities and dizziness indicated peripheral artery disease.
+Pain on walking and shortness of breath were reported, consistent with peripheral artery disease.
+Edema and ankle swelling led to a peripheral artery disease diagnosis.
+The patient experienced sudden weakness and dizziness, leading to a stroke diagnosis.
+Facial drooping and syncope were observed, confirming stroke.
+Chest tightness and lightheadedness indicated stroke.
+Nausea and vomiting were reported, consistent with stroke.
+Fatigue and palpitations led to a stroke diagnosis.
+The patient had leg swelling and pain, leading to a deep vein thrombosis diagnosis.
+Edema and ankle swelling were observed, confirming deep vein thrombosis.
+Leg tenderness and fatigue indicated deep vein thrombosis.
+Weakness and dizziness were reported, consistent with deep vein thrombosis.
+Palpitations and shortness of breath led to a deep vein thrombosis diagnosis.
+The patient had sudden shortness of breath and chest pain, and was diagnosed with pulmonary embolism.
+Palpitations and tachycardia were observed, confirming pulmonary embolism.
+Sweating and dizziness indicated pulmonary embolism.
+Fatigue and dyspnea were reported, consistent with pulmonary embolism.
+Chest tightness and lightheadedness led to a pulmonary embolism diagnosis.
+The patient experienced chest pain and shortness of breath, leading to a pericarditis diagnosis.
+Fatigue and palpitations were observed, confirming pericarditis.
+Sweating and chest tightness indicated pericarditis.
+Dyspnea and weakness were reported, consistent with pericarditis.
+Lightheadedness and tachycardia led to a pericarditis diagnosis.
+The patient had fever and fatigue, and was diagnosed with endocarditis.
+Palpitations and shortness of breath were observed, confirming endocarditis.
+Chest tightness and dizziness indicated endocarditis.
+Sweating and weakness were reported, consistent with endocarditis.
+Lightheadedness and nausea led to an endocarditis diagnosis.
+The patient experienced severe chest pain and dizziness, leading to aortic aneurysm diagnosis.
+Back pain and shortness of breath were observed, confirming aortic aneurysm.
+Palpitations and lightheadedness indicated aortic aneurysm.
+Chest tightness and fatigue were reported, consistent with aortic aneurysm.
+Sweating and syncope led to a aortic aneurysm diagnosis.
+The patient had sudden severe chest pain and shortness of breath, and was diagnosed with aortic dissection.
+Back pain and dizziness were observed, confirming aortic dissection.
+Palpitations and lightheadedness indicated aortic dissection.
+Chest tightness and fatigue were reported, consistent with aortic dissection.
+Sweating and syncope led to a aortic dissection diagnosis.
+The patient collapsed suddenly with syncope and was diagnosed with cardiac arrest.
+Palpitations and loss of consciousness were observed, confirming cardiac arrest.
+Chest pain and shortness of breath indicated cardiac arrest.
+Fatigue and dizziness were reported, consistent with cardiac arrest.
+Lightheadedness and arrhythmia led to a cardiac arrest diagnosis.
+The patient experienced sudden collapse and syncope, leading to a sudden cardiac death diagnosis.
+Palpitations and chest pain were observed, confirming sudden cardiac death.
+Shortness of breath and dizziness indicated sudden cardiac death.
+Lightheadedness and arrhythmia were reported, consistent with sudden cardiac death.
+Fatigue and loss of consciousness led to a sudden cardiac death diagnosis.
+The patient had chest pain and fatigue, and was diagnosed with ischemic heart disease.
+Shortness of breath and dizziness were observed, confirming ischemic heart disease.
+Palpitations and chest tightness indicated ischemic heart disease.
+Sweating and lightheadedness were reported, consistent with ischemic heart disease.
+Dyspnea and weakness led to an ischemic heart disease diagnosis.
+"""
