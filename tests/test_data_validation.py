@@ -1,7 +1,8 @@
 import pandas as pd
 import pytest
+from pathlib import Path
 
-CSV_PATH = "CardioSymptomsDataset.csv"
+CSV_PATH = Path(__file__).resolve().parent.parent / "src" / "CardioSymptomsDataset.csv"
 
 @pytest.fixture
 def dataset():
