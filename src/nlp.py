@@ -11,10 +11,10 @@ class NLPProcessor:
         self.nlp = nlp_model
 
         self.symptoms = [
-            "chest_pain","chest_tightness","angina","shortness_of_breath","dyspnea",
-            "orthopnea","paroxysmal_nocturnal_dyspnea","palpitations","tachycardia","arrhythmia",
+            "chest pain","chest tightness","angina","shortness of breath","dyspnea",
+            "orthopnea","paroxysmal nocturnal dyspnea","palpitations","tachycardia","arrhythmia",
             "fatigue","weakness","dizziness","syncope","lightheadedness","sweating",    
-            "edema","ankle_swelling","nausea","vomiting"
+            "edema","ankle swelling","nausea","vomiting"
         ]
         self.diseases = [
             "coronary artery disease", "myocardial infarction","angina pectoris","heart failure",
