@@ -9,24 +9,16 @@ from spacy.tokens import Doc, Span
 
 class NLPProcessor:
     def __init__(self, nlp_model, csv_path: Optional[str] = None):
-        """
-        Se csv_path for fornecido, os sintomas/doenças serão carregados do CSV
-        (colunas esperadas: symptom, disease, frequency). Também é montada
-        a lista de pares (symptom, disease) válidos para relações.
-        """
         self.nlp = nlp_model
 
-        # ---------------- CSV / Vocabulário ----------------
         self.symptoms: List[str] = []
         self.diseases: List[str] = []
-        self.exams: List[str] = ["electrocardiogram", "ecg", "blood pressure", "heart rate"]  # mantido simples
+        self.exams: List[str] = ["electrocardiogram", "ecg", "blood pressure", "heart rate"] 
 
-        # pares válidos (para relações), tudo em minúsculas
         self.valid_pairs: Set[Tuple[str, str]] = set()
 
         if csv_path:
             df = pd.read_csv(csv_path)
-            # normaliza e guarda únicas
             if "symptom" in df.columns and "disease" in df.columns:
                 self.symptoms = sorted({str(s).strip() for s in df["symptom"].dropna().astype(str)})
                 self.diseases = sorted({str(d).strip() for d in df["disease"].dropna().astype(str)})
@@ -38,7 +30,6 @@ class NLPProcessor:
             else:
                 raise ValueError("CSV precisa conter as colunas 'symptom' e 'disease'.")
         else:
-            # fallback (não usado nos testes, mas deixa a classe utilizável)
             self.symptoms = [
                 "chest pain","chest tightness","angina","shortness of breath","dyspnea",
                 "orthopnea","paroxysmal nocturnal dyspnea","palpitations","tachycardia","arrhythmia",
@@ -52,17 +43,13 @@ class NLPProcessor:
                 "endocarditis", "aortic aneurysm","aortic dissection",
                 "cardiac arrest", "sudden cardiac death","ischemic heart disease"
             ]
-            # sem pares válidos definidos aqui
 
-        # ---------------- Abreviações ----------------
-        # testes pedem MI/HF/ECG; mapeia para termos completos e rótulo
         self.abbrev_map: Dict[str, Tuple[str, str]] = {
             "mi": ("myocardial infarction", "DISEASE"),
             "hf": ("heart failure", "DISEASE"),
             "ecg": ("electrocardiogram", "EXAM"),
         }
 
-        # ---------------- Matchers ----------------
         self.matcher_sym = PhraseMatcher(self.nlp.vocab, attr="LOWER")
         self.matcher_dis = PhraseMatcher(self.nlp.vocab, attr="LOWER")
         self.matcher_exa = PhraseMatcher(self.nlp.vocab, attr="LOWER")
@@ -74,7 +61,6 @@ class NLPProcessor:
         if self.exams:
             self.matcher_exa.add("EXAM", [self.nlp.make_doc(t) for t in self.exams])
 
-        # ---------------- Padrões extras ----------------
         self.temporal_patterns = [
             re.compile(r"\b\d+\s+(day|days|hour|hours|week|weeks|month|months)\s+ago\b", re.I),
             re.compile(r"\bsince\s+(yesterday|today|day before yesterday)\b", re.I),
@@ -87,10 +73,7 @@ class NLPProcessor:
 
         self.negation_cues = {"no", "not", "denies", "denied", "without", "negative"}
 
-    # ---------------- Entidades ----------------
-
     def _match_entities(self, doc: Doc) -> List[Tuple[str, str, Tuple[int, int]]]:
-        """Retorna lista de (texto, rótulo, (start,end)) para spans do matcher."""
         spans: List[Tuple[int, int, str]] = []
         for _m, s, e in self.matcher_sym(doc):
             spans.append((s, e, "SYMPTOM"))
@@ -100,7 +83,6 @@ class NLPProcessor:
             spans.append((s, e, "EXAM"))
 
         span_objs: List[Span] = [Span(doc, s, e, label=label) for (s, e, label) in spans]
-        # resolve overlaps: mais longos primeiro
         span_objs.sort(key=lambda sp: (-(sp.end - sp.start), sp.start))
 
         final_spans: List[Span] = []
@@ -120,10 +102,8 @@ class NLPProcessor:
 
         doc: Doc = self.nlp(text)
 
-    # spans dos matchers
         matched = self._match_entities(doc)
 
-    # 1) Converter spans do matcher se forem abreviações (ex.: "ECG" -> "electrocardiogram")
         converted_from_matcher: List[Tuple[str, str]] = []
         for (t, l, _pos) in matched:
             low = t.lower()
@@ -133,7 +113,6 @@ class NLPProcessor:
             else:
                 converted_from_matcher.append((t, l))
 
-    # 2) Abreviações vistas como tokens (garante cobertura caso não tenha batido no matcher)
         expanded_from_tokens: List[Tuple[str, str]] = []
         for tok in doc:
             low = tok.text.lower()
@@ -141,7 +120,6 @@ class NLPProcessor:
                 full_term, label = self.abbrev_map[low]
                 expanded_from_tokens.append((full_term, label))
 
-    # 3) Junta e deduplica (case-insensitive)
         all_ents: List[Tuple[str, str]] = converted_from_matcher + expanded_from_tokens
         out: List[Tuple[str, str]] = []
         seen = set()
@@ -151,9 +129,6 @@ class NLPProcessor:
                 seen.add(key)
                 out.append((t, l))
         return out
-
-
-    # ---------------- Negação ----------------
 
     def extract_entities_with_negation(self, text: str) -> List[Tuple[str, str, bool]]:
         ents = self.extract_entities(text)
@@ -193,8 +168,6 @@ class NLPProcessor:
             results.append((ent_text, ent_label, is_neg))
         return results
 
-    # ---------------- Tempo / Medidas ----------------
-
     def extract_temporal_information(self, text: str) -> List[str]:
         if not text:
             return []
@@ -217,14 +190,7 @@ class NLPProcessor:
                 })
         return res
 
-    # ---------------- Relações (regra nova dos testes) ----------------
-
     def extract_relations(self, text: str) -> List[Tuple[str, str, str]]:
-        """
-        Cria relação ('SYMPTOM', 'RELATED_TO', 'DISEASE') somente quando:
-        - o sintoma e a doença aparecem na MESMA frase, e
-        - o par (sintoma, doença) existe no CSV (self.valid_pairs).
-        """
         if not text:
             return []
 
@@ -233,19 +199,15 @@ class NLPProcessor:
 
         for sent in doc.sents:
             sent_text = sent.text
-            # extrai entidades apenas da sentença
             ents_in_sent = self.extract_entities(sent_text)
-            # separa por tipo
             symptoms_in_sent = {t.lower(): t for (t, lbl) in ents_in_sent if lbl == "SYMPTOM"}
             diseases_in_sent = {t.lower(): t for (t, lbl) in ents_in_sent if lbl == "DISEASE"}
 
-            # combina e verifica se par consta no CSV
             for s_low, s_text in symptoms_in_sent.items():
                 for d_low, d_text in diseases_in_sent.items():
                     if (s_low, d_low) in self.valid_pairs:
                         rels.append((s_text, "RELATED_TO", d_text))
 
-        # dedup (case-insensitive nos extremos)
         seen = set()
         out = []
         for a, r, b in rels:
@@ -254,8 +216,6 @@ class NLPProcessor:
                 seen.add(key)
                 out.append((a, r, b))
         return out
-
-    # ---------------- Util ----------------
 
     def _normalize_abbrev(self, text_piece: str) -> str:
         low = text_piece.strip().lower()
