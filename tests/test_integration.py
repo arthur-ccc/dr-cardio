@@ -1,30 +1,43 @@
 import pytest
+import pandas as pd
 from unittest.mock import MagicMock, patch
-# esse arquivo ainda não existe
-from src.data_ingestion import DataIngestor
+
+import spacy
+from spacy.matcher import PhraseMatcher
+
 from src.nlp import NLPProcessor
-# esse arquivo ainda não existe
-from src.knowledge_structure import KnowledgeOrganizer
 from src.decision_tree import CardiovascularDiagnosisModel
+from src.data_ingestion import DataIngestor
+from src.knowledge_structure import KnowledgeOrganizer
+
+
 
 @pytest.fixture
-def mock_nlp_processor(mocker):
-    mock_nlp = MagicMock()
-    mock_processor = NLPProcessor(mock_nlp)
-    
-    # Mock das extrações de entidades e relações
-    mock_processor.extract_entities = MagicMock(return_value=[
-        ("dor no peito", "SINTOMA"),
-        ("infarto", "DOENÇA"),
-        ("eletrocardiograma", "EXAME")
-    ])
-    
-    mock_processor.extract_relations = MagicMock(return_value=[
-        ("dor no peito", "É_SINTOMA_DE", "infarto"),
-        ("eletrocardiograma", "DETECTA", "infarto")
-    ])
-    
-    return mock_processor
+def mock_nlp_processor():
+    # Criar um pipeline mínimo do spaCy
+    nlp = spacy.blank("en")
+    nlp.add_pipe("sentencizer")
+
+    class FakeNLPProcessor:
+        def __init__(self, nlp_model):
+            self.nlp = nlp_model
+            self.matcher_sym = PhraseMatcher(self.nlp.vocab, attr="LOWER")
+
+        def extract_entities(self, text):
+            doc = self.nlp(text)
+            # fake entities
+            if "dor no peito" in text:
+                return [("dor no peito", "SINTOMA"), ("infarto", "DOENÇA")]
+            elif "falta de ar" in text:
+                return [("falta de ar", "SINTOMA"), ("asma", "DOENÇA")]
+            return []
+
+        def extract_relations(self, text):
+            # apenas retorna uma lista vazia para não quebrar
+            return []
+
+    return FakeNLPProcessor(nlp)
+
 
 def test_full_pipeline_integration(tmp_path, mock_nlp_processor):
     """Testa o pipeline completo desde a ingestão até o diagnóstico"""
