@@ -21,7 +21,6 @@ MarkupSafe==3.0.2
 mdurl==0.1.2
 murmurhash==1.0.13
 numpy==2.3.2
-nvidia-nccl-cu12==2.27.7
 packaging==25.0
 pandas==2.3.2
 pluggy==1.6.0
