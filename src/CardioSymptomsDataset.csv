@@ -1,0 +1,21 @@
+chest_pain,chest_tightness,angina,shortness_of_breath,dyspnea,orthopnea,paroxysmal_nocturnal_dyspnea,palpitations,tachycardia,arrhythmia,fatigue,weakness,dizziness,syncope,lightheadedness,sweating,edema,ankle_swelling,nausea,vomiting,diagnostic
+0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,coronary artery disease
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,myocardial infarction
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,angina pectoris
+0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,heart failure
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,hypertension
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,arrhythmia
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,atrial fibrillation
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,cardiomyopathy
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,congenital heart disease
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,peripheral artery disease
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,stroke
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,deep vein thrombosis
+0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,pulmonary embolism
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,pericarditis
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,endocarditis
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,aortic aneurysm
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,aortic dissection
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,cardiac arrest
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,sudden cardiac death
+0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,ischemic heart disease
