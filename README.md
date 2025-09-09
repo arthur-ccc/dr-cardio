@@ -1,70 +1,141 @@
-# Dr. Cardio 🫀
-Sistema de Inteligência Artificial para análise automática de artigos científicos e auxílio no diagnóstico de doenças cardiovasculares.
+# 🧠 Sistema de Diagnóstico Cardiovascular Assistido por IA
 
-🚨 **Aviso importante:** Este projeto tem fins acadêmicos e **não substitui a avaliação médica profissional**.
+## 📌 Visão Geral
+Este projeto implementa um sistema de **extração de conhecimento médico** e **classificação de diagnósticos cardiovasculares** a partir de sintomas relatados.  
 
+Ele combina três pilares:
+1. **Ingestão de dados clínicos** (artigos médicos e datasets estruturados).
+2. **Processamento de linguagem natural (NLP)** para identificar sintomas, doenças e relações.
+3. **Modelo de árvore de decisão** para prever diagnósticos de forma interpretável.  
 
-## Arquitetura do Pipeline
+---
 
-1. **Ingestão dos dados**  
-   - Artigos advindos de bases open-source (kaglee).  
-   - Download → Coleta de metadados em tabela CSV.
+## 👥 Equipe
+- **Responsáveis pela arquitetura de IA**:
+  - Arthur Fernandes Vieira
+  - Guilherme José Araújo de Oliveira
+  - Isaque Esdras Rocha da Silva Soares Cavalcanti
+  - Jefferson Ribiero Brasil
+  - Maria Luiza Galdino Medeiros
+  - Rafael Alencar Adelino de Lima
 
-2. **NLP (Processamento de Linguagem Natural)**  
-   - Transformação do texto puro em informação estruturada.  
-   - Extração de entidades biomédicas (sintomas, doenças, exames).  
-   - Identificação de relações (ex.: `febre` → `cardiopatia`).  
+---
 
-3. **Estruturação do Conhecimento**  
-   - Organização em tabelas.  
-   - Consolidação de múltiplas evidências com referência aos artigos.
+## 🏗️ Arquitetura do Projeto
 
-4. **Camada de Decisão**  
-   - Implementação de **Árvore de Decisão** para diagnóstico.  
-   - Justificativa: maior **explicabilidade** em comparação com sistemas especialistas.  
+<details>
+<summary>📥 Ingestão de Dados (`data_ingestion.py`)</summary>
 
-## Justificativas Técnicas
+- Carrega datasets e artigos médicos (ex.: *medBook.txt*).
+- Estrutura metadados de artigos para processamento posterior.
+- Suporta múltiplas fontes de dados (CSV + texto).
 
-- **Algoritmo escolhido:** Árvore de Decisão (XgBoost)
-  - Alta performance quando comparado ao tradicional CART.
-  - Explicável e transparente.  
-  - Adequado para representar conhecimento derivado da literatura.  
-  - Fácil de validar em TDD.  
+</details>
 
-- **Alternativa descartada:** Sistema Especialista  
-  - Mais trabalhoso de manter (regras manuais).  
-  - Menos flexível ao crescer a base de artigos.  
+<details>
+<summary>🗣️ Processamento de Linguagem Natural (`nlp.py`)</summary>
 
-- **Ferramentas previstas:**  
-  - Python  
-  - Testes: pytest
-  - KaggleApi
+- Implementado com **spaCy** e `PhraseMatcher`.
+- Extrai:
+  - **Entidades**: sintomas, doenças, exames.  
+  - **Negação**: identifica quando um sintoma/doença foi negado.  
+  - **Relações** sintoma-doença com base em pares válidos.  
+  - **Informações temporais** e **medições clínicas**.  
 
-## Plano de TDD
+**Justificativa:**  
+- spaCy escolhido por sua eficiência em NLP biomédico e suporte a expansão futura com modelos como *SciSpacy*.  
+- Combina regras + NLP → robustez mesmo sem modelos pesados.
 
-- **Testes Unitários**
-  - Extração de texto e metadados dos artigos. 
-  - Reconhecimento de entidades biomédicas em frases de teste.
+</details>
 
-- **Testes de Relação**
-  - Sintoma ↔ Doença (ex.: "dor no peito" → "cardiopatia").
+<details>
+<summary>📚 Organização de Conhecimento (`knowledge_structure.py`)</summary>
 
-- **Testes da Árvore de Decisão**
-  - Predições em casos clínicos sintéticos.
-  - Explicabilidade: cada decisão deve exibir o caminho da árvore.
+- Classe `KnowledgeOrganizer`:  
+  - Estrutura sintomas, doenças, exames, relações e frequências.  
+  - Gera tabelas de conhecimento (CSV + JSON).  
+  - Cria dataset de treinamento (features binárias).  
 
-- **Testes de Integração**
-  - Pipeline completo: artigo → entidades → árvore → diagnóstico.  
+**Justificativa:**  
+- Separação clara entre **extração de conhecimento** e **modelo preditivo**.  
+- Facilita auditoria e interpretabilidade.  
 
+</details>
 
-## Como Rodar (futuro)
+<details>
+<summary>🌳 Modelo de Aprendizado de Máquina (`decision_tree.py`)</summary>
 
-```bash
-# Clonar repositório
-git clone https://github.com/seu-user/dr-neuronios
+- Classe `CardiovascularDiagnosisModel`:  
+  - Baseado em **DecisionTreeClassifier (scikit-learn)**.  
+  - Pipeline com **SimpleImputer** para lidar com valores ausentes.  
+  - Explicabilidade com:
+    - Caminho da decisão (`decision_path`).  
+    - Importância das features.  
+  - Persistência com `joblib`.  
 
-# Instalar dependências
-pip install -r requirements.txt
+**Justificativas:**  
+- **Árvores de decisão** foram escolhidas por:  
+  - Alta **explicabilidade** (crucial em contexto médico).  
+  - Suporte a variáveis binárias/contínuas.  
+  - Robustez contra dados ausentes.  
+- Arquiteturas mais complexas (ex.: redes neurais profundas) foram descartadas nesta versão para privilegiar transparência clínica.
 
-# Rodar testes
-pytest
+</details>
+
+---
+
+## 📊 Bases de Dados
+
+1. **`CardioSymptomsDataset.csv`**  
+   - Dataset tabular com ~20 sintomas binários (0/1) + coluna alvo `diagnostic`.  
+   - Base principal para treinar o modelo de árvore.  
+
+2. **`medBook.txt`**  
+   - Corpus textual com descrições clínicas (sintomas → diagnósticos).  
+   - Usado para validar a etapa de NLP.  
+
+3. **Datasets externos**  
+   - Podem ser incorporados com `update_with_external_dataset()`.  
+
+---
+
+## ⚙️ Pré-Processamento
+
+- Conversão de sintomas em **features binárias** (presente/ausente).  
+- Padronização para minúsculas e remoção de ruídos.  
+- **SimpleImputer(strategy="most_frequent")** para dados ausentes.  
+- Geração de **exemplos positivos e negativos** no `KnowledgeOrganizer`.  
+
+---
+
+## 🖥️ Recursos Computacionais
+
+- **Linguagem:** Python 3.10+  
+- **Bibliotecas principais:**  
+  - `pandas`, `numpy` → manipulação de dados.  
+  - `scikit-learn` → modelo de árvore.  
+  - `spaCy` → NLP biomédico.  
+  - `joblib` → salvar/carregar modelo.  
+
+- **Hardware:**  
+  - CPU suficiente (árvores são leves).  
+  - GPU não necessária, mas pode ser usada em versões futuras (transformers biomédicos).  
+
+---
+
+## 📚 Referência Científica
+
+O modelo de árvore de decisão é baseado no trabalho clássico:
+
+> **Breiman, L., Friedman, J., Olshen, R., & Stone, C. (1984).**  
+> *Classification and Regression Trees (CART).*  
+
+**Justificativa:**  
+- Robusto para dados binários de sintomas.  
+- Fácil integração com NLP + ML.  
+
+---
+
+## 🚀 Fluxo do Sistema
+
+![Fluograma](fluxograma.png)
