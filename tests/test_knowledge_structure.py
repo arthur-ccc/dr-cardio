@@ -9,7 +9,7 @@ import json
 from src.knowledge_structure import KnowledgeOrganizer
 
 class TestKnowledgeOrganizer:
-        
+    # configurações
     @pytest.fixture
     def setup_organizer(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -25,23 +25,22 @@ class TestKnowledgeOrganizer:
         with open("src/medBook.txt", "r", encoding="utf-8") as f: # lendo o medbook
             return f.read()
     
-    def test_initialization_with_real_data(self, setup_organizer, cardio_symptoms_dataset):
-        
-        organizer = setup_organizer
-        
+
+    def test_initialization_with_real_data(self, cardio_symptoms_dataset):
+        """o que tem que testar:
+        - verificar se o dataset não está vazio
+        - confirmar que existe coluna 'diagnostic'
+        - verificar que há 20 sintomas no dataset, 20 porque é a quantidade que temos no real até agr"""
+
         assert not cardio_symptoms_dataset.empty
         assert 'diagnostic' in cardio_symptoms_dataset.columns
         
         symptom_cols = [col for col in cardio_symptoms_dataset.columns if col != 'diagnostic']
-        assert len(symptom_cols) == 20  # tem 20 sintomas no dataset, a´te agr
-        
-        unique_diagnostics = cardio_symptoms_dataset['diagnostic'].unique()
-        assert len(unique_diagnostics) > 0
+        assert len(symptom_cols) == 20
     
     def test_update_with_external_dataset_correct_format(self, setup_organizer):
-        organizer = setup_organizer
         
-        # Criar dataset no formato esperado pelo método
+        # cria dataset no formato esperado no método a ser implementado
         external_data = pd.DataFrame({
             'symptom': ['chest_pain', 'shortness_of_breath', 'fatigue', 'palpitations'],
             'disease': ['coronary artery disease', 'heart failure', 'hypertension', 'arrhythmia']
@@ -52,73 +51,75 @@ class TestKnowledgeOrganizer:
             dataset_path = f.name
         
         try:
-            organizer.update_with_external_dataset(dataset_path)
+            setup_organizer.update_with_external_dataset(dataset_path)
             
             # ve se os sintomas e doenças foram adicionados
-            assert len(organizer.symptoms) > 0
-            assert len(organizer.diseases) > 0
-            
+            assert len(setup_organizer.symptoms) > 0
+            assert len(setup_organizer.diseases) > 0
             print("formato correto")
-            
+        except Exception as e:
+            print(e)
         finally:
             Path(dataset_path).unlink()
 
-
     def test_create_training_from_real_dataset(self, setup_organizer, cardio_symptoms_dataset):
         """Testa a criação de dataset de treinamento a partir do dataset real"""
-        organizer = setup_organizer
         
         symptom_cols = [col for col in cardio_symptoms_dataset.columns if col != 'diagnostic']
         
         for symptom in symptom_cols:
-            organizer.symptoms.add(symptom)
-            organizer.symptom_frequency[symptom] = 1
+            setup_organizer.symptoms.add(symptom)
+            setup_organizer.symptom_frequency[symptom] = 1
         
         for disease in cardio_symptoms_dataset['diagnostic'].unique():
-            organizer.diseases.add(disease.lower())
-            organizer.disease_frequency[disease.lower()] = 1
+            setup_organizer.diseases.add(disease.lower())
+            setup_organizer.disease_frequency[disease.lower()] = 1
         
         for _, row in cardio_symptoms_dataset.iterrows():
             disease = row['diagnostic'].lower()
             for symptom in symptom_cols:
                 if row[symptom] == 1:
                     key = (symptom, disease)
-                    organizer.symptom_disease_associations[key] = 1
+                    setup_organizer.symptom_disease_associations[key] = 1
         
         # dataset de treinamento
-        training_df = organizer._create_training_dataset(
+        training_df = setup_organizer._create_training_dataset(
             pd.DataFrame({
-                'symptom': list(organizer.symptoms),
-                'disease': list(organizer.diseases),
-                'association_strength': [1] * len(organizer.symptoms)
+                'symptom': list(setup_organizer.symptoms),
+                'disease': list(setup_organizer.diseases),
+                'association_strength': [1] * len(setup_organizer.symptoms) # é sempre 0 ou 1. * o len por conta do número de ocorrências
             }),
             pd.DataFrame({
-                'symptom': list(organizer.symptoms),
-                'frequency': [1] * len(organizer.symptoms)
+                'symptom': list(setup_organizer.symptoms),
+                'frequency': [1] * len(setup_organizer.symptoms)
             }),
             pd.DataFrame({
-                'disease': list(organizer.diseases),
-                'frequency': [1] * len(organizer.diseases)
+                'disease': list(setup_organizer.diseases),
+                'frequency': [1] * len(setup_organizer.diseases)
             })
         )
+
+        # Se chest_pain = 1 AND shortness_of_breath = 1 -> provavelmente coronary artery disease
+        # Se fatigue = 1 AND palpitations = 1 -> provavelmente hypertension
         
+        # passou
         assert not training_df.empty
         assert 'diagnostic' in training_df.columns
         
-        # ver todas as colunas de sintomas estão presentes
+        # ver se todas as colunas de sintomas estão presentes
         for symptom in symptom_cols:
             assert symptom in training_df.columns
         
     @patch('src.nlp.NLPProcessor')
     def test_process_medbook_content(self, mock_nlp_class, setup_organizer, sample_medbook_content):
         """Testa o processamento do conteúdo real do medBook.txt"""
-        organizer = setup_organizer
         
         mock_nlp = MagicMock()
         
         def mock_extract_entities(text):
             entities = []
             
+            # manualmente por enquanto
             symptoms = [
                 'chest pain', 'shortness of breath', 'fatigue', 'palpitations',
                 'dizziness', 'sweating', 'chest tightness', 'dyspnea',
@@ -126,7 +127,6 @@ class TestKnowledgeOrganizer:
                 'ankle swelling', 'nausea', 'vomiting', 'headaches',
                 'tachycardia', 'orthopnea', 'paroxysmal nocturnal dyspnea'
             ]
-            
             diseases = [
                 'coronary artery disease', 'myocardial infarction', 'angina pectoris',
                 'heart failure', 'hypertension', 'arrhythmia', 'atrial fibrillation',
@@ -136,12 +136,10 @@ class TestKnowledgeOrganizer:
                 'sudden cardiac death', 'ischemic heart disease'
             ]
             
-            # Verificar sintomas no texto
+            # criando as entidades manualmente
             for symptom in symptoms:
                 if symptom.lower() in text.lower():
-                    entities.append((symptom, 'SYMPTOM', False))
-            
-            # Verificar doenças no texto
+                    entities.append((symptom, 'SYMPTOM', False))            
             for disease in diseases:
                 if disease.lower() in text.lower():
                     entities.append((disease, 'DISEASE', False))
@@ -159,6 +157,7 @@ class TestKnowledgeOrganizer:
                 'palpitations': ['arrhythmia', 'atrial fibrillation', 'hypertension']
             }
             
+            # criando as relações manualmente
             for symptom, possible_diseases in symptom_disease_map.items():
                 if symptom in text.lower():
                     for disease in possible_diseases:
@@ -171,7 +170,7 @@ class TestKnowledgeOrganizer:
         mock_nlp.extract_relations = mock_extract_relations
         mock_nlp_class.return_value = mock_nlp
         
-        organizer.nlp_processor = mock_nlp
+        setup_organizer.nlp_processor = mock_nlp
         
         # conteúdo do medbook
         metadata = pd.Series({
@@ -180,21 +179,21 @@ class TestKnowledgeOrganizer:
             'title': 'Cardiovascular Medicine Textbook'
         })
         
-        # processamento do conteudo (simuladooooo)
-        organizer._process_entities(mock_extract_entities(sample_medbook_content), metadata)
-        organizer._process_relations(mock_extract_relations(sample_medbook_content), metadata)
+        # processando o conteudo (simuladooooo)
+        setup_organizer._process_entities(mock_extract_entities(sample_medbook_content), metadata)
+        setup_organizer._process_relations(mock_extract_relations(sample_medbook_content), metadata)
         
-        assert len(organizer.symptoms) > 0
-        assert len(organizer.diseases) > 0
-        assert len(organizer.relations) > 0
+        # agora vai
+        assert len(setup_organizer.symptoms) > 0
+        assert len(setup_organizer.diseases) > 0
+        assert len(setup_organizer.relations) > 0
         
         expected_diseases = ['coronary artery disease', 'myocardial infarction', 'heart failure']
         for disease in expected_diseases:
-            assert disease in organizer.diseases
+            assert disease in setup_organizer.diseases
     
     def test_export_format_compatibility(self, setup_organizer, cardio_symptoms_dataset):
         """Testa se o formato extraído é compatível com o formato esperado (real)"""
-        organizer = setup_organizer
         
         # dataset real como base
         training_df = cardio_symptoms_dataset.copy()
@@ -204,8 +203,8 @@ class TestKnowledgeOrganizer:
         for col in symptom_cols:
             training_df[col] = training_df[col].astype(int)
         
-        with patch.object(organizer, 'get_training_dataset', return_value=training_df):
-            export_path = organizer.export_for_decision_tree()
+        with patch.object(setup_organizer, 'get_training_dataset', return_value=training_df):
+            export_path = setup_organizer.export_for_decision_tree()
             
             assert export_path != ""
             assert Path(export_path).exists()
@@ -220,26 +219,23 @@ class TestKnowledgeOrganizer:
                 assert exported_df[col].dtype in [np.int64, int]
             
     def test_knowledge_tables_creation_with_real_data(self, setup_organizer):
-        """Testa a criação completa de tabelas de conhecimento com dados reais"""
-        organizer = setup_organizer
+        """Testa a criação de tabelas de conhecimento com dados reais"""
         
         # dados de exemplo baseados no dataset real
-        organizer.symptoms = {
+        setup_organizer.symptoms = {
             'chest_pain', 'shortness_of_breath', 'fatigue', 'palpitations',
             'dizziness', 'sweating', 'dyspnea', 'edema'
         }
-        
-        organizer.diseases = {
+        setup_organizer.diseases = {
             'coronary artery disease', 'myocardial infarction', 'heart failure',
             'hypertension', 'arrhythmia'
         }
         
         # Adicionar frequências
-        for symptom in organizer.symptoms:
-            organizer.symptom_frequency[symptom] = 3
-        
-        for disease in organizer.diseases:
-            organizer.disease_frequency[disease] = 2
+        for symptom in setup_organizer.symptoms:
+            setup_organizer.symptom_frequency[symptom] = 3
+        for disease in setup_organizer.diseases:
+            setup_organizer.disease_frequency[disease] = 2
         
         associations = {
             ('chest_pain', 'coronary artery disease'): 5,
@@ -249,9 +245,9 @@ class TestKnowledgeOrganizer:
             ('dizziness', 'hypertension'): 2
         }
         
-        organizer.symptom_disease_associations.update(associations)
+        setup_organizer.symptom_disease_associations.update(associations)
         
-        organizer.relations = [
+        setup_organizer.relations = [
             {
                 'symptom': 'chest_pain',
                 'relation': 'associated_with',
@@ -268,15 +264,17 @@ class TestKnowledgeOrganizer:
             }
         ]
         
-        tables = organizer.create_knowledge_tables()
+        tables = setup_organizer.create_knowledge_tables() # retorna um dict
         
-        for table_name in ['symptoms', 'diseases', 'exams', 'relations', 'associations', 'training_data']:
+        col = ['symptoms', 'diseases', 'exams', 'relations', 'associations', 'training_data']
+
+        for table_name in col:
             assert table_name in tables
             if table_name != 'exams':  # exams pode estar vazio
                 assert not tables[table_name].empty
         
         # Verificar estatísticas
-        stats_path = Path(organizer.output_dir) / "knowledge_stats.json"
+        stats_path = Path(setup_organizer.output_dir) / "knowledge_stats.json"
         assert stats_path.exists()
         
         with open(stats_path, 'r') as f:
@@ -290,11 +288,10 @@ class TestKnowledgeOrganizer:
     
     def test_integration_with_decision_tree_format(self, setup_organizer, cardio_symptoms_dataset):
         """Testa a integração com o formato esperado pela árvore de decisão"""
-        organizer = setup_organizer
         
         # Simular que temos o dataset de treinamento
-        with patch.object(organizer, 'get_training_dataset', return_value=cardio_symptoms_dataset):
-            export_path = organizer.export_for_decision_tree()
+        with patch.object(setup_organizer, 'get_training_dataset', return_value=cardio_symptoms_dataset):
+            export_path = setup_organizer.export_for_decision_tree()
             
             # ver se arquivo foi criado
             assert export_path != ""
@@ -312,10 +309,10 @@ class TestKnowledgeOrganizer:
             exported_diagnostics = exported_df['diagnostic'].unique()
             assert set(original_diagnostics) == set(exported_diagnostics)
             
-            print("integração com árvore de decisão testada com sucesso")
+            print("integração com arvore passa")
 
 class TestKnowledgeOrganizerIntegration:
-    """Testes de integração seguindo o nosso fluxograma"""
+    """testa a integração seguindo o nosso fluxograma"""
     
     def test_full_pipeline_with_real_data(self):
         """Testa o pipeline completo desde artigos até dataset estruturado"""
@@ -343,7 +340,7 @@ class TestKnowledgeOrganizerIntegration:
                 
                 diseases = cardio_df['diagnostic'].unique()
                 
-                # padronizando
+                # limpando e padronizando
                 for symptom in symptoms:
                     if symptom.replace('_', ' ') in text.lower():
                         entities.append((symptom, 'SYMPTOM', False))
@@ -395,6 +392,3 @@ class TestKnowledgeOrganizerIntegration:
             assert 'diagnostic' in exported_df.columns
             
             print("Pipeline completo testado com sucesso!")
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
