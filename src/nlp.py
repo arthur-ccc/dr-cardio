@@ -44,6 +44,8 @@ class NLPProcessor:
                 "cardiac arrest", "sudden cardiac death","ischemic heart disease"
             ]
 
+            self.valid_pairs = self._build_default_pairs()
+
         self.abbrev_map: Dict[str, Tuple[str, str]] = {
             "mi": ("myocardial infarction", "DISEASE"),
             "hf": ("heart failure", "DISEASE"),
@@ -222,3 +224,55 @@ class NLPProcessor:
         if low in self.abbrev_map:
             return self.abbrev_map[low][0]
         return text_piece.strip()
+    
+    def _build_default_pairs(self) -> Set[Tuple[str, str]]:
+        """
+        Fallback de pares válidos quando não há CSV.
+        Todos os termos usados aqui existem nas listas default acima.
+        """
+        symptom_to_diseases: Dict[str, List[str]] = {
+            # Dor torácica e correlatos
+            "chest pain": [
+                "myocardial infarction", "angina pectoris", "coronary artery disease",
+                "pericarditis", "aortic dissection", "ischemic heart disease"
+            ],
+            "chest tightness": ["angina pectoris", "coronary artery disease", "ischemic heart disease"],
+            "angina": ["angina pectoris", "coronary artery disease", "ischemic heart disease"],
+
+            # Dispneia / falta de ar
+            "shortness of breath": ["heart failure", "pulmonary embolism", "myocardial infarction", "arrhythmia"],
+            "dyspnea": ["heart failure", "pulmonary embolism", "arrhythmia"],
+            "orthopnea": ["heart failure"],
+            "paroxysmal nocturnal dyspnea": ["heart failure"],
+
+            # Palpitações / ritmo
+            "palpitations": ["arrhythmia", "atrial fibrillation"],
+            "tachycardia": ["arrhythmia", "atrial fibrillation"],
+            "arrhythmia": ["arrhythmia", "atrial fibrillation"],  # quando relatada como sintoma
+
+            # Tontura / síncope
+            "dizziness": ["arrhythmia"],
+            "syncope": ["arrhythmia"],
+
+            # Edema / inchaço
+            "edema": ["heart failure", "deep vein thrombosis"],
+            "ankle swelling": ["heart failure", "deep vein thrombosis"],
+
+            # Autonômicos / GI que sugerem IAM
+            "sweating": ["myocardial infarction"],
+            "nausea": ["myocardial infarction"],
+            "vomiting": ["myocardial infarction"],
+
+            # Sintomas muito inespecíficos (mapeamento conservador)
+            "fatigue": ["heart failure"],
+            "weakness": ["stroke"],            # mapeamento conservador
+            "lightheadedness": ["arrhythmia"], # perto de síncope/tontura
+        }
+
+        # Normaliza para (sintoma.lower(), doença.lower())
+        pairs: Set[Tuple[str, str]] = {
+            (sym.lower().strip(), dis.lower().strip())
+            for sym, diseases in symptom_to_diseases.items()
+            for dis in diseases
+        }
+        return pairs
