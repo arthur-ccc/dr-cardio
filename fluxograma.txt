@@ -1,0 +1,13 @@
+Dataset (mock ou real)
+       ↓
+preprocessing/preprocess.py
+       ↓
+X_train, X_test, y_train, y_test
+       ↓
+classifiers/generic_classifier.py
+       ↓
+Treinamento de cada modelo
+       ↓
+tests/evaluate.py
+       ↓
+Métricas (Accuracy, F1, ROC AUC)
