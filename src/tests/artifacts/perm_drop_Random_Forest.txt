@@ -1,0 +1,2 @@
+base_acc=0.9595
+max_drop=0.0135
