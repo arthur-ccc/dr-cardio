@@ -131,4 +131,144 @@ ul {
   }
 }
 
+
+.form-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.step-intro, .step-age, .step-form, .step-result {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.symptoms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-group select, .form-group input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.family-history {
+  margin: 20px 0;
+}
+
+.family-history label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: normal;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-submit {
+  padding: 12px 24px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.btn-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc3545;
+  padding: 10px;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+
+.diagnosis-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #007bff;
+}
+
+.diagnosis-title {
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.diagnosis-title.high-confidence {
+  color: #28a745;
+}
+
+.diagnosis-title.medium-confidence {
+  color: #ffc107;
+}
+
+.confidence-level {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.confidence-value {
+  font-weight: bold;
+  color: #28a745;
+}
+
+.probabilities ul {
+  list-style: none;
+  padding: 0;
+}
+
+.probabilities li {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.disease-name {
+  color: #555;
+}
+
+.disease-prob {
+  font-weight: bold;
+  color: #007bff;
+}
+
+
  

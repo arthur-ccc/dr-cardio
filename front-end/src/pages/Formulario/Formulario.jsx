@@ -3,11 +3,13 @@ import "./Formulario.css";
 
 export default function Formulario() {
   const [step, setStep] = useState(0);
+  const [diagnosis, setDiagnosis] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
     form_age: "",
     form_familyHistory: false,
-    // Clínicos
     form_erythema: 0,
     form_scaling: 0,
     form_definiteBorders: 0,
@@ -18,7 +20,6 @@ export default function Formulario() {
     form_oralMucosalInvolvement: 0,
     form_kneeElbowInvolvement: 0,
     form_scalpInvolvement: 0,
-    // Histopatológicos
     form_melaninIncontinence: 0,
     form_eosinophilsInfiltrate: 0,
     form_pnlInfiltrate: 0,
@@ -91,6 +92,80 @@ export default function Formulario() {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
+  const featuresOrder = [
+  "form_erythema",
+  "form_scaling",
+  "form_definiteBorders",
+  "form_itching",
+  "form_koebnerPhenomenon",
+  "form_polygonalPapules",
+  "form_follicularPapules",
+  "form_oralMucosalInvolvement",
+  "form_kneeElbowInvolvement",
+  "form_scalpInvolvement",
+  "form_familyHistory",
+  "form_melaninIncontinence",
+  "form_eosinophilsInfiltrate",
+  "form_pnlInfiltrate",
+  "form_fibrosisPapillaryDermis",
+  "form_exocytosis",
+  "form_acanthosis",
+  "form_hyperkeratosis",
+  "form_parakeratosis",
+  "form_clubbingReteRidges",
+  "form_elongationReteRidges",
+  "form_thinningSuprapapillaryEpidermis",
+  "form_spongiformPustule",
+  "form_munroMicroabcess",
+  "form_focalHypergranulosis",
+  "form_disappearanceGranularLayer",
+  "form_vacuolisationBasalLayer",
+  "form_spongiosis",
+  "form_sawToothRete",
+  "form_follicularHornPlug",
+  "form_perifollicularParakeratosis",
+  "form_inflammatoryMononuclearInfiltrate",
+  "form_bandLikeInfiltrate",
+  "form_age"
+];
+
+const features = featuresOrder.map(key => {
+  if (key === "form_familyHistory") return formData[key] ? 1 : 0;
+  return parseInt(formData[key]);
+});
+
+  const handleSubmit = async () => {
+  setLoading(true);
+  setError(null);
+
+  try {
+    console.log("🚀 Enviando para o backend:", { features }); // <--- DEBUG
+
+    const response = await fetch('http://localhost:8000/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ features }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Erro ao processar a requisição');
+    }
+
+    const result = await response.json();
+    setDiagnosis(result);
+    nextStep();
+  } catch (err) {
+    setError(err.message);
+    console.error('Erro:', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   const renderSelect = (name) => (
     <div className="form-group" key={name}>
       <label>{atributosTraduzidos[name]}</label>
@@ -137,18 +212,19 @@ export default function Formulario() {
             onChange={handleChange}
             placeholder="Digite sua idade"
             min="0"
+            max="120"
           />
-
           <div className="family-history">
-            <p>Sua família já apresentou histórico de doenças eritemato-esquamosas? Marque aqui se sim:</p>
-            <input
-              type="checkbox"
-              name="form_familyHistory"
-              checked={formData.form_familyHistory}
-              onChange={handleChange}
-            />
+            <label>
+              <input
+                type="checkbox"
+                name="form_familyHistory"
+                checked={formData.form_familyHistory}
+                onChange={handleChange}
+              />
+              Sua família já apresentou histórico de doenças eritemato-esquamosas?
+            </label>
           </div>
-
           <div className="buttons">
             <button className="btn-submit" onClick={prevStep}>Voltar</button>
             <button
@@ -165,19 +241,53 @@ export default function Formulario() {
       {step === 2 && (
         <div className="step-form">
           <h2>Preencha os sintomas</h2>
-          {todosAtributos.map(renderSelect)}
+          <div className="symptoms-grid">
+            {todosAtributos.map(renderSelect)}
+          </div>
           <div className="buttons">
             <button className="btn-submit" onClick={prevStep}>Voltar</button>
-            <button className="btn-submit" onClick={nextStep}>Próximo</button>
+            <button
+              className="btn-submit"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Processando..." : "Enviar Diagnóstico"}
+            </button>
           </div>
+          {error && <div className="error-message">Erro: {error}</div>}
         </div>
       )}
 
-      {step === 3 && (
+      {step === 3 && diagnosis && (
         <div className="step-result">
-          <h2>Diagnóstico previsto (simulado)</h2>
-          <pre>{JSON.stringify(formData, null, 2)}</pre>
-          <button className="btn-submit" onClick={prevStep}>Voltar</button>
+          <h2>Resultado do Diagnóstico</h2>
+          <div className="diagnosis-card">
+            <h3 className={`diagnosis-title ${diagnosis.confidence > 0.7 ? 'high-confidence' : 'medium-confidence'}`}>
+              {diagnosis.disease_name}
+            </h3>
+            <div className="confidence-level">
+              <span>Nível de confiança: </span>
+              <span className="confidence-value">
+                {(diagnosis.confidence * 100).toFixed(1)}%
+              </span>
+            </div>
+            <div className="probabilities">
+              <h4>Probabilidades:</h4>
+              <ul>
+                {Object.entries(diagnosis.probabilities).map(([disease, prob]) => (
+                  <li key={disease}>
+                    <span className="disease-name">{disease}:</span>
+                    <span className="disease-prob">{(prob * 100).toFixed(1)}%</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="buttons">
+            <button className="btn-submit" onClick={() => setStep(0)}>
+              Novo Diagnóstico
+            </button>
+          </div>
         </div>
       )}
     </div>
