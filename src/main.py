@@ -23,7 +23,7 @@ classifiers = {
 for classifier in classifiers.values():
     classifier.train(X_train, y_train)
 
-# paths = classifiers["Decision Tree"].decision_path(X_test)
+paths = classifiers["Decision Tree"].decision_path(X_test)
 
 # for i, p in enumerate(paths[:3]):
 #     print(f"Amostra {i}:")

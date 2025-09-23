@@ -3,6 +3,7 @@
     "python-envs.pythonProjects": [],
     "python.analysis.extraPaths": [
         "./src/preprocessing",
-        "./src/classifiers"
+        "./src/classifiers",
+        "./src"
     ]
 }

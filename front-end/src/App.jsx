@@ -1,6 +1,6 @@
 import './App.css'
 
-import Header from './static/header/header'
+import Header from './static/header/Header'
 import InicialPage from './pages/InicialPage/InicialPage'
 import Formulario from './pages/Formulario/Formulario'
 

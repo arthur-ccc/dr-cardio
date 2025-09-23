@@ -2,10 +2,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
 from sklearn.impute import SimpleImputer
-from imblearn.over_sampling import SMOTE
 
 
-# Mapeamento das classes para nomes de doenças
 DISEASE_MAP = {
     1: "Psoríase",
     2: "Dermatite seborreica",

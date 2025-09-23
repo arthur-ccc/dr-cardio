@@ -72,7 +72,7 @@ export default function InicialPage() {
               <GiCheckMark className="step-icon" />
               <h4>2. Processamento</h4>
               <p>
-                A árvore de decisão processa os dados usando padrões previamente treinados.
+                Varias arvores de decisão no metodo de "random forest" processam os dados usando padrões previamente treinados.
               </p>
             </div>
             <div className="step">

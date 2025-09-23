@@ -146,7 +146,7 @@ const features = featuresOrder.map(key => {
     if (onlyAge && age > 0) {
       setDiagnosis({ disease_name: "Você não está com doenças do tipo eritemato-esquamosas, pois não apresentou nenhum sintoma." });
       nextStep();
-      return; // não chama o backend
+      return; 
     }
 
     console.log("🚀 Enviando para o backend:", { features });
@@ -270,7 +270,7 @@ const features = featuresOrder.map(key => {
 
       {step === 3 && diagnosis && (
   <div className="step-result">
-    <h2>Resultado do Diagnóstico</h2>
+    <h2>Provavel Diagnóstico</h2>
     <div className="diagnosis-card">
       <h3 className="diagnosis-title">
         {diagnosis.disease_name}

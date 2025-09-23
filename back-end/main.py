@@ -9,13 +9,13 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import os
 import joblib
-from classifiers.generic_classifier import GenericClassifier
+from src.classifiers.generic_classifier import GenericClassifier
 
 app = FastAPI(title="Dr Derma API", version="1.0")
 
 # Caminhos absolutos para o modelo e mapa de doenças
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "decision_tree.pkl")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "random_forest.pkl")
 MAP_PATH = os.path.join(BASE_DIR, "models", "disease_map.pkl")
 
 # Carrega o modelo e mapa
