@@ -1,5 +1,5 @@
 from sklearn.base import BaseEstimator
-
+import numpy as np
 
 class GenericClassifier:
     
@@ -39,12 +39,12 @@ class GenericClassifier:
             sample_path = []
             for node_id in node_index:
                 if feature[node_id] != -2:  # -2 significa nó folha
-                    if X_test[sample_id, feature[node_id]] <= threshold[node_id]:
+                    if X_test.iloc[sample_id, feature[node_id]] <= threshold[node_id]:
                         threshold_sign = "<="
                     else:
                         threshold_sign = ">"
                     sample_path.append(
-                        f"X[{feature[node_id]}] (valor={X_test[sample_id, feature[node_id]]}) "
+                        f"X[{feature[node_id]}] (valor={X_test.iloc[sample_id, feature[node_id]]}) "
                         f"{threshold_sign} {threshold[node_id]:.2f}"
                     )
                 else:
