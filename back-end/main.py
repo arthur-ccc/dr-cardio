@@ -3,7 +3,7 @@ import os
 
 # adiciona a raiz do projeto ao sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+from sklearn.tree import DecisionTreeClassifier
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -48,21 +48,10 @@ def home():
 
 @app.post("/predict")
 def predict(request: PredictRequest):
+    # Faz a predição
     prediction = clf.predict([request.features])[0]
     disease_name = disease_map.get(prediction + 1, "Desconhecida")
-    
-    try:
-        probabilities = clf.predict_proba([request.features])[0]
-        prob_dict = {
-            disease_map.get(i + 1, str(i)): float(prob)
-            for i, prob in enumerate(probabilities)
-        }
-    except NotImplementedError:
-        prob_dict = {}
-    
-    return {
-        "disease_name": disease_name,
-        "prediction": int(prediction),
-        "confidence": max(prob_dict.values()) if prob_dict else 1.0,
-        "probabilities": prob_dict
-    }
+
+    # Retorna apenas o nome da doença
+    return {"disease_name": disease_name}
+

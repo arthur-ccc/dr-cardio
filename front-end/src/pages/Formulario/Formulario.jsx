@@ -139,19 +139,29 @@ const features = featuresOrder.map(key => {
   setError(null);
 
   try {
-    console.log("🚀 Enviando para o backend:", { features }); // <--- DEBUG
+    // 🚨 Checa se todos os sintomas são 0
+    const onlyAge = features.slice(0, -1).every((val) => val === 0);
+    const age = features[features.length - 1];
 
-    const response = await fetch('http://localhost:8000/predict', {
-      method: 'POST',
+    if (onlyAge && age > 0) {
+      setDiagnosis({ disease_name: "Você não está com doenças do tipo eritemato-esquamosas, pois não apresentou nenhum sintoma." });
+      nextStep();
+      return; // não chama o backend
+    }
+
+    console.log("🚀 Enviando para o backend:", { features });
+
+    const response = await fetch("http://localhost:8000/predict", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ features }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.detail || 'Erro ao processar a requisição');
+      throw new Error(errorData.detail || "Erro ao processar a requisição");
     }
 
     const result = await response.json();
@@ -159,7 +169,7 @@ const features = featuresOrder.map(key => {
     nextStep();
   } catch (err) {
     setError(err.message);
-    console.error('Erro:', err);
+    console.error("Erro:", err);
   } finally {
     setLoading(false);
   }
@@ -259,37 +269,27 @@ const features = featuresOrder.map(key => {
       )}
 
       {step === 3 && diagnosis && (
-        <div className="step-result">
-          <h2>Resultado do Diagnóstico</h2>
-          <div className="diagnosis-card">
-            <h3 className={`diagnosis-title ${diagnosis.confidence > 0.7 ? 'high-confidence' : 'medium-confidence'}`}>
-              {diagnosis.disease_name}
-            </h3>
-            <div className="confidence-level">
-              <span>Nível de confiança: </span>
-              <span className="confidence-value">
-                {(diagnosis.confidence * 100).toFixed(1)}%
-              </span>
-            </div>
-            <div className="probabilities">
-              <h4>Probabilidades:</h4>
-              <ul>
-                {Object.entries(diagnosis.probabilities).map(([disease, prob]) => (
-                  <li key={disease}>
-                    <span className="disease-name">{disease}:</span>
-                    <span className="disease-prob">{(prob * 100).toFixed(1)}%</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="buttons">
-            <button className="btn-submit" onClick={() => setStep(0)}>
-              Novo Diagnóstico
-            </button>
-          </div>
-        </div>
-      )}
+  <div className="step-result">
+    <h2>Resultado do Diagnóstico</h2>
+    <div className="diagnosis-card">
+      <h3 className="diagnosis-title">
+        {diagnosis.disease_name}
+      </h3>
+      <p className="disclaimer">
+        Diagnóstico gerado pelo nosso modelo de inteligência artificial.  
+        Este diagnóstico é apenas uma previsão e <strong>não substitui</strong> a avaliação de uma equipe médica especializada.  
+        Nosso modelo obteve uma acurácia de <strong>93%</strong> em testes locais, mas ainda assim pode apresentar erros.  
+        Em caso de dúvidas, procure sempre um profissional de saúde.
+      </p>
+    </div>
+    <div className="buttons">
+      <button className="btn-submit" onClick={() => setStep(0)}>
+        Novo Diagnóstico
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
