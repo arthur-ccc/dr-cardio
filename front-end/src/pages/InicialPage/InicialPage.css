@@ -1,0 +1,129 @@
+/* ================= Base ================= */
+.scroll-page {
+  font-family: 'Poppins', sans-serif;
+  scroll-behavior: smooth;
+}
+
+.section {
+  min-height: 65vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  color: #fff;
+  transition: all 0.6s ease-in-out;
+  text-align: center;
+}
+
+.content {
+  width: 100%;
+}
+
+/* ================= Seções ================= */
+.disciplina {
+  background: linear-gradient(135deg, #2b5876, #4e4376);
+}
+
+.introducao {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.funcionamento {
+  background: linear-gradient(135deg, #ff9966, #ff5e62);
+}
+
+.formulario {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+}
+
+/* ================= Títulos e texto ================= */
+.section h1 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.section p {
+  max-width: 80%;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-left: 10%;
+}
+
+/* ================= Ícones ================= */
+.section-icon {
+  font-size: 80px;
+  margin-top: 20px;
+  opacity: 0.8;
+  transition: transform 0.5s ease;
+}
+.section-icon:hover {
+  transform: scale(1.1);
+}
+
+.card-icon, .step-icon {
+  font-size: 50px;
+  margin-bottom: 15px;
+  color: #ffd700;
+  transition: transform 0.3s ease;
+}
+
+.card h3 {
+  color: white;
+}
+.card:hover .card-icon,
+.step:hover .step-icon {
+  transform: scale(1.2);
+}
+
+/* ================= Cards ================= */
+.cards, .steps {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.card, .step {
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 20px;
+  width: 250px;
+  transition: transform 0.3s ease, background 0.3s ease;
+
+}
+.card:hover, .step:hover {
+  transform: translateY(-10px);
+  background: rgba(255,255,255,0.2);
+}
+
+/* ================= Botão ================= */
+.btn-formulario {
+  margin-top: 25px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: #fff;
+  color: #ff416c;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-formulario:hover {
+  transform: translateY(-3px);
+  background: #f1f1f1;
+}
+
+/* ================= Imagem da seção ================= */
+.section-image {
+  margin-top: 20px;
+  width: 120px;
+  opacity: 0.8;
+  transition: transform 0.5s ease;
+}
+.section-image:hover {
+  transform: scale(1.1);
+}
+
